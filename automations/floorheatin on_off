@@ -1,0 +1,56 @@
+# Floorheating on if anyone is home during specific times
+- alias: Golvvärme på
+  trigger:
+  - platform: state
+    entity_id: group.iphone_people
+    to: home
+  - platform: time
+    at: '06:01:00'
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: group.iphone_people
+      state: home
+    - condition: or
+      conditions:
+      - condition: time
+        after: '06:00:00'
+        before: '20:00:00'
+        weekday:
+          - mon
+          - thu
+          - wed
+          - thu
+          - fri
+      - condition: time
+        after: '08:00:00'
+        before: '21:00:00'
+        weekday:
+          - sat
+          - sun
+  action:
+    - service: climate.set_operation_mode
+      entity_id: climate.golvvarme_hall_heating
+      data:
+        operation_mode: Heat (Default)
+    - service: climate.set_temperature
+      entity_id: climate.golvvarme_hall_heating
+      data:
+        temperature: 22.0
+
+# Floorheatning off 5 minutes after everyone left or after 23.00
+- alias: Floorheating off
+  trigger:
+  - platform: state
+    entity_id: group.iphone_people
+    to: not_home
+    for:
+     minutes: 5
+  - platform: time
+    at: '23:01:00'
+  action:
+    service: climate.set_operation_mode
+    entity_id: climate.golvvarme_hall_heating
+    data:
+       operation_mode: 'Off'
