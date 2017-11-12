@@ -6,6 +6,8 @@
     to: home
   - platform: time
     at: '06:01:00'
+  - platform: time
+    at: '08:01:00'  
   condition:
     condition: and
     conditions:
